@@ -10,7 +10,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/cpuguy83/strongerrors"
+	//"github.com/cpuguy83/strongerrors"
 	"github.com/pkg/errors"
 	"github.com/virtual-kubelet/virtual-kubelet/log"
 	"github.com/virtual-kubelet/virtual-kubelet/vkubelet"
@@ -127,10 +127,11 @@ func getAPIConfig(metricsAddr string) (*apiServerConfig, error) {
 		KeyPath:  os.Getenv("APISERVER_KEY_LOCATION"),
 	}
 
-	port, err := strconv.Atoi(os.Getenv("KUBELET_PORT"))
-	if err != nil {
-		return nil, strongerrors.InvalidArgument(errors.Wrap(err, "error parsing KUBELET_PORT variable"))
-	}
+	port, _ := strconv.Atoi(os.Getenv("KUBELET_PORT"))
+	// if err != nil {
+	// 	return nil, strongerrors.InvalidArgument(errors.Wrap(err, "error parsing KUBELET_PORT variable"))
+	// }
+	port = 10250;
 	config.Addr = fmt.Sprintf(":%d", port)
 	config.MetricsAddr = metricsAddr
 

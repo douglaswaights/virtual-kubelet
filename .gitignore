@@ -38,3 +38,4 @@ loganalytics.json
 **/terraform-provider-kubernetes
 **/*.tfstate*
 debug
+applications/scanner.zip

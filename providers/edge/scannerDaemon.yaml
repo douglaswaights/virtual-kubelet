@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: scanner
+  namespace: kube-system
+  labels:
+    k8s-app: scanner
+spec:
+  selector:
+    matchLabels:
+      name: scanner
+  template:
+    metadata:
+      labels:
+        name: scanner
+    spec:
+      nodeSelector:
+        type: virtual-kubelet
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        effect: NoSchedule
+      - key: virtual-kubelet.io/provider
+        operator: Exists
+      containers:
+      - name: scanner
+        image: scanner
+        env:
+          - name: SECRET_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: mysecret
+                key: mykey
+        resources:
+          limits:
+            memory: 200Mi
+          requests:
+            cpu: 100m
+            memory: 200Mi
+      terminationGracePeriodSeconds: 30
+      
