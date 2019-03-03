@@ -3,7 +3,9 @@ package edge
 import (
 	"context"
 	"io"
-	"log"
+	"os"
+	"path/filepath"
+
 	"time"
 
 	"github.com/virtual-kubelet/virtual-kubelet/manager"
@@ -14,9 +16,12 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/tools/remotecommand"
+
+	log "github.com/Sirupsen/logrus"
 )
 
 var pathTooApplicationsDir string
+var applicationsDirName = "applications"
 
 // EdgeProvider a provider for running applications at the edge
 type EdgeProvider struct {
@@ -32,7 +37,15 @@ type EdgeProvider struct {
 // NewEdgeProvider create a new provider
 func NewEdgeProvider(providerConfigPath string, nodeName string, resourceManager *manager.ResourceManager, operatingSystem string, daemonEndPoint int32) (*EdgeProvider, error) {
 
-	pathTooApplicationsDir = "applications"
+	var filename = "C:/git/go/src/github.com/douglaswaights/edge-agent/logs/vk.log"
+	f, _ := os.OpenFile(filename, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
+	log.SetOutput(f)
+
+	ex, _ := os.Executable()
+	homeExeFullDir := filepath.Dir(ex)
+	//pathTooApplicationsDir = homeExeFullDir + "/applications"
+	pathTooApplicationsDir = filepath.FromSlash(homeExeFullDir + "/" + applicationsDirName)
+
 	edge := EdgeProvider{
 		nodeName:           nodeName,
 		providerConfigPath: providerConfigPath,

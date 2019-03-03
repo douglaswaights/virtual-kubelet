@@ -40,7 +40,7 @@ func createApp(pod *v1.Pod) error {
 			return err
 		}
 	}
-	err = downloadApp(name, "")
+	err = downloadApp(pathTooApplicationsDir, name, "")
 	if err != nil {
 		return err
 	}
@@ -102,7 +102,7 @@ func removeApp(pathTooApplicationsDir string, name string, retries int) error {
 	return err
 }
 
-func downloadApp(name string, version string) error {
+func downloadApp(pathTooApplicationsDir string, name string, version string) error {
 
 	log.Printf("Downloading app %s version %s", name, version)
 	resp, err := http.Get("http://localhost:8008" + "/application")
@@ -111,15 +111,32 @@ func downloadApp(name string, version string) error {
 	}
 	defer resp.Body.Close()
 
-	out, err := os.Create("applications/scanner.zip")
+	_, err = os.Stat(pathTooApplicationsDir)
 	if err != nil {
+		if os.IsNotExist(err) {
+			err = os.Mkdir(pathTooApplicationsDir, os.ModePerm)
+			if err != nil {
+				log.Printf("could not create the directory %v", err)
+				return err
+			}
+		}
+		return err
+	}
+
+	out, err := os.Create(filepath.Join(pathTooApplicationsDir, "scanner.zip"))
+	if err != nil {
+		log.Printf("could not create the zip file %v", err)
 		return err
 	}
 	defer out.Close()
 
 	_, err = io.Copy(out, resp.Body)
 
-	Unzip("applications/scanner.zip", "applications"+"/"+name)
+	_, err = Unzip(filepath.Join(pathTooApplicationsDir, "scanner.zip"), filepath.Join(pathTooApplicationsDir, name))
+	if err != nil {
+		log.Printf("Could not unzip %v", err)
+		return err
+	}
 	return nil
 }
 
