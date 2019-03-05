@@ -39,3 +39,4 @@ loganalytics.json
 **/*.tfstate*
 debug
 applications/scanner.zip
+applications/scanner/args

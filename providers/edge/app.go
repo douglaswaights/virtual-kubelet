@@ -123,7 +123,7 @@ func downloadApp(pathTooApplicationsDir string, name string, version string) err
 		return err
 	}
 
-	out, err := os.Create(filepath.Join(pathTooApplicationsDir, "scanner.zip"))
+	out, err := os.Create(filepath.Join(pathTooApplicationsDir, name+".zip"))
 	if err != nil {
 		log.Printf("could not create the zip file %v", err)
 		return err
@@ -132,7 +132,7 @@ func downloadApp(pathTooApplicationsDir string, name string, version string) err
 
 	_, err = io.Copy(out, resp.Body)
 
-	_, err = Unzip(filepath.Join(pathTooApplicationsDir, "scanner.zip"), filepath.Join(pathTooApplicationsDir, name))
+	_, err = Unzip(filepath.Join(pathTooApplicationsDir, name+".zip"), filepath.Join(pathTooApplicationsDir, name))
 	if err != nil {
 		log.Printf("Could not unzip %v", err)
 		return err
